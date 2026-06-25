@@ -10,12 +10,19 @@ never babysit browser automation or VM queues — campaigns run in HeyReach's cl
 
 ## Setup
 1. HeyReach account: https://heyreach.io/?via=ivanrx
-2. API key: HeyReach Settings → Integrations → API.
-3. Either:
-   - **MCP (recommended):** add the HeyReach MCP server to Claude Code
-     (`claude mcp add --scope user --transport http heyreach '<MCP URL from HeyReach Settings>'`), then
-     restart so the `heyreach.*` tools load; or
-   - **REST:** base `https://api.heyreach.io/api/public/`, header `X-API-KEY: <key>`.
+2. Pick ONE transport. MCP and REST use **different credentials from different sub-sections** of
+   Settings → Integrations — do not mix them up:
+   - **MCP (recommended):** Settings → Integrations → **MCP Server** → *Get MCP key* → copy the
+     **MCP Connection URL** (the key is already baked into the URL). Then:
+     `claude mcp add --scope user --transport http heyreach '<MCP Connection URL>'`
+     Restart Claude so the `heyreach.*` tools load. Verify: `claude mcp list` → `heyreach … connected`.
+   - **REST (fallback):** Settings → Integrations → **API** → copy the API key (a SEPARATE key from the
+     MCP key). Base `https://api.heyreach.io/api/public/`, header `X-API-KEY: <key>`.
+
+> **Transport decision — check this first, every session.** If `claude mcp list` shows `heyreach`
+> connected, ALWAYS call the `heyreach.*` MCP tools. Do **not** curl the REST API. Reach for REST only
+> when no MCP server is connected **and** you actually have an `X-API-KEY`. Hitting REST without a key
+> returns `401 Unauthorized` — that means "wrong transport / missing key", not "service is down".
 
 ## Core model
 **The API drives CAMPAIGNS (sequences), not individual clicks.** You don't "send a connect to X" ad-hoc.

@@ -24,9 +24,17 @@ You review the ready batch and say "send." HeyReach handles warmup and rate limi
 
 ## Install
 1. Sign up for HeyReach: **https://heyreach.io/?via=ivanrx**
-2. Connect your LinkedIn account in HeyReach and grab your API key (Settings → Integrations → API).
-3. Add the HeyReach MCP server to Claude Code (URL in HeyReach Settings), or use the REST API directly.
+2. Connect your LinkedIn account in HeyReach.
+3. Pick a transport (MCP and REST use **different** keys — don't mix them):
+   - **MCP (recommended):** Settings → Integrations → **MCP Server** → *Get MCP key* → copy the
+     **MCP Connection URL**, then
+     `claude mcp add --scope user --transport http heyreach '<MCP Connection URL>'` and restart Claude.
+   - **REST (fallback):** Settings → Integrations → **API** → copy the API key (a separate key).
 4. Drop `SKILL.md` into your Claude skills (`~/.claude/skills/heyreach/SKILL.md`).
+
+> If the MCP server shows `connected` in `claude mcp list`, let Claude use the `heyreach.*` tools — do
+> not point it at REST. Calling REST without an `X-API-KEY` returns `401`, which looks like a broken
+> service but just means "wrong transport / missing key."
 
 Full how-to, the working campaign recipe, and the gotchas are in [`SKILL.md`](./SKILL.md).
 
