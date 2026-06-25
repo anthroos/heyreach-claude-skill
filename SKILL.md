@@ -29,8 +29,24 @@ never babysit browser automation or VM queues — campaigns run in HeyReach's cl
 You create a campaign with a sequence (connection request → wait → message → follow-up) and push leads into
 it; HeyReach executes from the cloud with warmup and rate limits.
 
+## Sourcing leads — the API does NOT search LinkedIn
+There is **no "find people" tool**. HeyReach ingests leads you already have (`add_leads_to_list` /
+`add_leads_to_campaign` take `profileUrl` / `navigatorProfileId`); it does not run a LinkedIn people-search
+for you. So "find 10 X" is a **research** step you do first, then push the results in.
+
+- **Sales Navigator import** needs a connected Sales Navigator seat. Check it: `get_all_linked_in_accounts`
+  → `isValidNavigator: true`. If it's `false`, Sales-Nav sourcing is unavailable on that sender.
+- **No Sales Navigator? Source by web research** (recommended default): find real people via the web
+  (company leadership/about pages, LinkedIn, press, conference speaker lists), collect their **real
+  LinkedIn profile URLs**, then `add_leads_to_list`. Never invent names or profile URLs — verify each.
+- Post-reactor and event-attendee harvesting work **without** a Sales Navigator seat.
+
+Workflow with Claude: research → show the list (name, title, company, profile URL) for approval → only
+then create the list and push. Keep a human gate before anything touches the account.
+
 ## The research-to-send loop
-1. **Find/enrich leads** (your own research, a LinkedIn/Sales-Navigator search, post reactors, event attendees).
+1. **Find/enrich leads** (web research → real profile URLs; or post reactors / event attendees; or a
+   Sales-Navigator search if you have a seat). The API does not search — see *Sourcing leads* above.
 2. **Personalize:** generate a custom first line per lead, store it as a **lead custom field**, and reference
    it in the sequence template as `{{custom_field}}` (e.g. `{{note}}`). HeyReach also supports `{{firstName}}`, etc.
 3. **Create + start** the campaign (below). HeyReach sends, paces, and collects replies.
